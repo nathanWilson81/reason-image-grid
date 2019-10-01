@@ -59,62 +59,34 @@ function getPhotos(param) {
 var API = /* module */[/* getPhotos */getPhotos];
 
 function PhotoContainer(Props) {
-  var match = ReactUpdate.useReducer(/* record */[
-        /* photos : [] */0,
-        /* modalOpen */false,
-        /* modalId */0,
-        /* loading */false
-      ], (function (action, state) {
+  var match = ReactUpdate.useReducer(/* record */[/* visualState : Loading */0], (function (action, state) {
           if (typeof action === "number") {
-            if (action === 0) {
-              return /* UpdateWithSideEffects */Block.__(1, [
-                        state,
-                        (function (param) {
-                            var send = param[/* send */0];
-                            Curry._1(send, /* PhotosLoading */Block.__(0, [true]));
-                            Utils$ReactHooksTemplate.fetchAndDecode("https://jsonplaceholder.typicode.com/photos", Decoders$ReactHooksTemplate.decodePhotos).then((function (photos) {
-                                    var filteredPhotos = List.filter((function (photo) {
-                                              return photo[/* id */1] < 26;
-                                            }))(photos);
-                                    return Promise.resolve(Curry._1(send, /* SetPhotos */Block.__(1, [filteredPhotos])));
-                                  }));
-                            Curry._1(send, /* PhotosLoading */Block.__(0, [false]));
-                            return (function (param) {
-                                      return /* () */0;
-                                    });
-                          })
-                      ]);
-            } else {
-              return /* Update */Block.__(0, [/* record */[
-                          /* photos */state[/* photos */0],
-                          /* modalOpen */false,
-                          /* modalId */state[/* modalId */2],
-                          /* loading */state[/* loading */3]
-                        ]]);
-            }
+            return /* UpdateWithSideEffects */Block.__(1, [
+                      state,
+                      (function (param) {
+                          var send = param[/* send */0];
+                          Utils$ReactHooksTemplate.fetchAndDecode("https://jsonplaceholder.typicode.com/photos", Decoders$ReactHooksTemplate.decodePhotos).then((function (photos) {
+                                  var filteredPhotos = List.filter((function (photo) {
+                                            return photo[/* id */1] < 26;
+                                          }))(photos);
+                                  return Promise.resolve(Curry._1(send, /* SetVisualState */Block.__(2, [/* Loaded */Block.__(0, [filteredPhotos])])));
+                                }));
+                          return (function (param) {
+                                    return /* () */0;
+                                  });
+                        })
+                    ]);
           } else {
             switch (action.tag | 0) {
               case 0 : 
-                  return /* Update */Block.__(0, [/* record */[
-                              /* photos */state[/* photos */0],
-                              /* modalOpen */state[/* modalOpen */1],
-                              /* modalId */state[/* modalId */2],
-                              /* loading */action[0]
-                            ]]);
+                  return /* Update */Block.__(0, [/* record */[/* visualState : Modal */Block.__(2, [
+                                  action[0],
+                                  action[1]
+                                ])]]);
               case 1 : 
-                  return /* Update */Block.__(0, [/* record */[
-                              /* photos */action[0],
-                              /* modalOpen */state[/* modalOpen */1],
-                              /* modalId */state[/* modalId */2],
-                              /* loading */state[/* loading */3]
-                            ]]);
+                  return /* Update */Block.__(0, [/* record */[/* visualState : Loaded */Block.__(0, [action[0]])]]);
               case 2 : 
-                  return /* Update */Block.__(0, [/* record */[
-                              /* photos */state[/* photos */0],
-                              /* modalOpen */true,
-                              /* modalId */action[0],
-                              /* loading */state[/* loading */3]
-                            ]]);
+                  return /* Update */Block.__(0, [/* record */[/* visualState */action[0]]]);
               case 3 : 
                   var id = action[1];
                   var string = action[0];
@@ -122,7 +94,6 @@ function PhotoContainer(Props) {
                             state,
                             (function (param) {
                                 localStorage.setItem("image" + id, string);
-                                Curry._1(param[/* send */0], /* SetModalClosed */1);
                                 return (function (param) {
                                           return /* () */0;
                                         });
@@ -133,44 +104,52 @@ function PhotoContainer(Props) {
           }
         }));
   var send = match[1];
-  var state = match[0];
   React.useEffect((function () {
           Curry._1(send, /* FetchPhotos */0);
           return undefined;
         }), ([]));
-  var match$1 = state[/* loading */3];
-  if (match$1) {
+  var match$1 = match[0][/* visualState */0];
+  if (typeof match$1 === "number") {
     return React.createElement("h1", undefined, "...Loading");
   } else {
-    var match$2 = state[/* modalOpen */1];
-    return React.createElement("div", {
-                className: container
-              }, React.createElement("div", {
-                    className: photoContainer
-                  }, match$2 ? React.createElement(PhotoModal$ReactHooksTemplate.make, {
-                          photo: List.hd(List.filter((function (photo) {
-                                        return photo[/* id */1] === state[/* modalId */2];
-                                      }))(state[/* photos */0])),
-                          setModalClosed: (function (param) {
-                              return Curry._1(send, /* SetModalClosed */1);
-                            }),
-                          onInputSubmit: (function (value, id) {
-                              return Curry._1(send, /* SetItemToLocalStorage */Block.__(3, [
-                                            value,
-                                            id
-                                          ]));
-                            })
-                        }) : null, $$Array.of_list(List.map((function (item) {
-                              return React.createElement(PhotoItem$ReactHooksTemplate.make, {
-                                          id: item[/* id */1],
-                                          title: item[/* title */2],
-                                          thumbnailUrl: item[/* thumbnailUrl */4],
-                                          url: item[/* url */3],
-                                          setModalOpen: (function (param) {
-                                              return Curry._1(send, /* SetModalOpen */Block.__(2, [item[/* id */1]]));
-                                            })
-                                        });
-                            }), state[/* photos */0]))));
+    switch (match$1.tag | 0) {
+      case 0 : 
+          var photos = match$1[0];
+          return React.createElement("div", {
+                      className: container
+                    }, React.createElement("div", {
+                          className: photoContainer
+                        }, $$Array.of_list(List.map((function (item) {
+                                    return React.createElement(PhotoItem$ReactHooksTemplate.make, {
+                                                photo: item,
+                                                photos: photos,
+                                                setModalOpen: (function (photo, photos) {
+                                                    return Curry._1(send, /* SetModalOpen */Block.__(0, [
+                                                                  photo,
+                                                                  photos
+                                                                ]));
+                                                  }),
+                                                key: String(item[/* id */1])
+                                              });
+                                  }), photos))));
+      case 1 : 
+          return React.createElement("h1", undefined, "Uh oh: " + match$1[0]);
+      case 2 : 
+          return React.createElement(PhotoModal$ReactHooksTemplate.make, {
+                      photo: match$1[0],
+                      photos: match$1[1],
+                      setModalClosed: (function (photos) {
+                          return Curry._1(send, /* SetModalClosed */Block.__(1, [photos]));
+                        }),
+                      onInputSubmit: (function (value, id) {
+                          return Curry._1(send, /* SetItemToLocalStorage */Block.__(3, [
+                                        value,
+                                        id
+                                      ]));
+                        })
+                    });
+      
+    }
   }
 }
 

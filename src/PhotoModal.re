@@ -26,7 +26,7 @@ module Styles = {
 };
 
 [@react.component]
-let make = (~photo, ~setModalClosed, ~onInputSubmit) => {
+let make = (~photo, ~photos, ~setModalClosed, ~onInputSubmit) => {
   let (inputValue, setInputValue) =
     React.useState(() => {
       let storageItem =
@@ -38,23 +38,25 @@ let make = (~photo, ~setModalClosed, ~onInputSubmit) => {
       | None => ""
       };
     });
-  <div className=Styles.modalMask onClick={_ => setModalClosed(inputValue)}>
+  <div className=Styles.modalMask onClick={_ => setModalClosed(photos)}>
     <div onClick={e => ReactEvent.Mouse.stopPropagation(e)}>
       <h3> {React.string(photo.title)} </h3>
       <img src={photo.url} />
       <div className=Styles.buttonContainer>
         <input
           value=inputValue
-          onChange={e => {
-            ReactEvent.Form.stopPropagation(e);
-            setInputValue(ReactEvent.Form.target(e)##value);
-          }}
+          onChange={
+            e => {
+              ReactEvent.Form.stopPropagation(e);
+              setInputValue(ReactEvent.Form.target(e)##value);
+            }
+          }
         />
         <button
           onClick={_ => onInputSubmit(inputValue, string_of_int(photo.id))}>
-          {React.string("Submit and close")}
+          {React.string("Submit")}
         </button>
-        <button onClick={_ => setModalClosed(inputValue)}>
+        <button onClick={_ => setModalClosed(photos)}>
           {React.string("Close")}
         </button>
       </div>

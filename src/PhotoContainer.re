@@ -20,57 +20,57 @@ module API = {
     );
 };
 
+type visualState =
+  | Loading
+  | Loaded(list(photo))
+  | Error(string)
+  | Modal(photo, list(photo));
+
 type action =
   | FetchPhotos
-  | PhotosLoading(bool)
-  | SetPhotos(list(photo))
-  | SetModalOpen(int)
-  | SetModalClosed
+  | SetModalOpen(photo, list(photo))
+  | SetModalClosed(list(photo))
+  | SetVisualState(visualState)
   | SetItemToLocalStorage(string, string);
 
-type state = {
-  photos: list(photo),
-  modalOpen: bool,
-  modalId: int,
-  loading: bool,
-};
+type state = {visualState};
 
 [@react.component]
 let make = _ => {
   let (state, send) =
-    ReactUpdate.useReducer(
-      {photos: [], modalOpen: false, modalId: 0, loading: false},
-      (action, state) =>
+    ReactUpdate.useReducer({visualState: Loading}, (action, state) =>
       switch (action) {
+      | SetVisualState(visualState) => Update({visualState: visualState})
       | FetchPhotos =>
         UpdateWithSideEffects(
           state,
-          ({send}) => {
-            ignore(send(PhotosLoading(true)));
-            ignore(
-              API.getPhotos()
-              |> Js.Promise.then_(photos => {
-                   let filteredPhotos =
-                     List.filter(photo => photo.id < 26, photos);
-                   send(SetPhotos(filteredPhotos)) |> Js.Promise.resolve;
-                 }),
-            );
-            ignore(send(PhotosLoading(false)));
-            Some(() => ());
-          },
+          (
+            ({send}) => {
+              ignore(
+                API.getPhotos()
+                |> Js.Promise.then_(photos => {
+                     let filteredPhotos =
+                       List.filter(photo => photo.id < 26, photos);
+                     send(SetVisualState(Loaded(filteredPhotos)))
+                     |> Js.Promise.resolve;
+                   }),
+              );
+              Some(() => ());
+            }
+          ),
         )
-      | PhotosLoading(loading) => Update({...state, loading})
-      | SetPhotos(photos) => Update({...state, photos})
-      | SetModalOpen(id) => Update({...state, modalOpen: true, modalId: id})
-      | SetModalClosed => Update({...state, modalOpen: false})
+      | SetModalOpen(photo, photos) =>
+        Update({visualState: Modal(photo, photos)})
+      | SetModalClosed(photos) => Update({visualState: Loaded(photos)})
       | SetItemToLocalStorage(string, id) =>
         UpdateWithSideEffects(
           state,
-          ({send}) => {
-            Dom.Storage.(localStorage |> setItem("image" ++ id, string));
-            send(SetModalClosed);
-            Some(() => ());
-          },
+          (
+            _ => {
+              Dom.Storage.(localStorage |> setItem("image" ++ id, string));
+              Some(() => ());
+            }
+          ),
         )
       }
     );
@@ -78,39 +78,37 @@ let make = _ => {
     send(FetchPhotos);
     None;
   });
-  state.loading
-    ? <h1> {React.string("...Loading")} </h1>
-    : <div className=Styles.container>
-        <div className=Styles.photoContainer>
-          {state.modalOpen
-             ? <PhotoModal
-                 photo={List.hd(
-                   List.filter(
-                     photo => photo.id == state.modalId,
-                     state.photos,
-                   ),
-                 )}
-                 setModalClosed={_ => send(SetModalClosed)}
-                 onInputSubmit={(value, id) =>
-                   send(SetItemToLocalStorage(value, id))
-                 }
-               />
-             : React.null}
-          {React.array(
-             Array.of_list(
-               List.map(
-                 item =>
-                   <PhotoItem
-                     url={item.url}
-                     id={item.id}
-                     title={item.title}
-                     thumbnailUrl={item.thumbnailUrl}
-                     setModalOpen={() => send(SetModalOpen(item.id))}
-                   />,
-                 state.photos,
-               ),
-             ),
-           )}
-        </div>
-      </div>;
+  switch (state.visualState) {
+  | Loading => <h1> {React.string("...Loading")} </h1>
+  | Modal(photo, photos) =>
+    <PhotoModal
+      photo
+      photos
+      onInputSubmit=((value, id) => send(SetItemToLocalStorage(value, id)))
+      setModalClosed=(photos => send(SetModalClosed(photos)))
+    />
+  | Error(message) => <h1> {React.string("Uh oh: " ++ message)} </h1>
+  | Loaded(photos) =>
+    <div className=Styles.container>
+      <div className=Styles.photoContainer>
+        {
+          React.array(
+            Array.of_list(
+              photos |> List.map(
+                item =>
+                  <PhotoItem
+                    key={string_of_int(item.id)}
+                    photo=item
+                    photos
+                    setModalOpen={
+                      (photo, photos) => send(SetModalOpen(photo, photos))
+                    }
+                  />
+              ),
+            ),
+          )
+        }
+      </div>
+    </div>
+  };
 };
