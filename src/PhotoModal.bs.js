@@ -73,6 +73,7 @@ var Styles = /* module */[
 
 function PhotoModal(Props) {
   var photo = Props.photo;
+  var photos = Props.photos;
   var setModalClosed = Props.setModalClosed;
   var onInputSubmit = Props.onInputSubmit;
   var match = React.useState((function () {
@@ -88,7 +89,7 @@ function PhotoModal(Props) {
   return React.createElement("div", {
               className: modalMask,
               onClick: (function (param) {
-                  return Curry._1(setModalClosed, inputValue);
+                  return Curry._1(setModalClosed, photos);
                 })
             }, React.createElement("div", {
                   onClick: (function (e) {
@@ -109,9 +110,9 @@ function PhotoModal(Props) {
                           onClick: (function (param) {
                               return Curry._2(onInputSubmit, inputValue, String(photo[/* id */1]));
                             })
-                        }, "Submit and close"), React.createElement("button", {
+                        }, "Submit"), React.createElement("button", {
                           onClick: (function (param) {
-                              return Curry._1(setModalClosed, inputValue);
+                              return Curry._1(setModalClosed, photos);
                             })
                         }, "Close"))));
 }

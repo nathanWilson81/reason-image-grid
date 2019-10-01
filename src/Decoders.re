@@ -1,4 +1,4 @@
-open Types
+open Types;
 open Json.Decode;
 let decodePhotos =
   list(json =>

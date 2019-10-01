@@ -33,19 +33,17 @@ var Styles = /* module */[
 ];
 
 function PhotoItem(Props) {
-  Props.id;
-  Props.title;
-  Props.thumbnailUrl;
-  var url = Props.url;
+  var photo = Props.photo;
+  var photos = Props.photos;
   var setModalOpen = Props.setModalOpen;
   return React.createElement("div", {
               className: container,
               onClick: (function (param) {
-                  return Curry._1(setModalOpen, /* () */0);
+                  return Curry._2(setModalOpen, photo, photos);
                 })
             }, React.createElement("img", {
                   className: photoItem,
-                  src: url
+                  src: photo[/* url */3]
                 }));
 }
 

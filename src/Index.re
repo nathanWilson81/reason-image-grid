@@ -1,1 +1,1 @@
-ReactDOMRe.renderToElementWithId(<PhotoContainer />, "index")
+ReactDOMRe.renderToElementWithId(<PhotoContainer />, "index");
