@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PhotoItem renders the item 1`] = `
+<div>
+  <div
+    class="css-5v12vm"
+  >
+    <img
+      alt=""
+      class="css-1ye53x6"
+      src="foo1"
+    />
+  </div>
+</div>
+`;

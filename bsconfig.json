@@ -3,10 +3,16 @@
   "reason": {
     "react-jsx": 3
   },
-  "sources": {
-    "dir": "src",
-    "subdirs": true
-  },
+  "sources": [ 
+    {
+      "dir": "src",
+      "subdirs": true
+    },
+    {
+      "dir": "__tests__",
+      "type": "dev"
+    }
+  ],
   "package-specs": [
     {
       "module": "commonjs",
@@ -16,11 +22,16 @@
   "suffix": ".bs.js",
   "namespace": true,
   "bs-dependencies": [
-    "reason-react",
-    "bs-fetch",
     "@glennsl/bs-json",
-    "reason-react-update",
-    "bs-css"
+    "bs-css",
+    "bs-fetch",
+    "reason-react",
+    "reason-react-update"
+  ],
+  "bs-dev-dependencies":[
+    "@glennsl/bs-jest",
+    "bs-jest-dom",
+    "bs-react-testing-library"
   ],
   "refmt": 3
 }

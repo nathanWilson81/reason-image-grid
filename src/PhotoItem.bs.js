@@ -43,6 +43,7 @@ function PhotoItem(Props) {
                 })
             }, React.createElement("img", {
                   className: photoItem,
+                  alt: "",
                   src: photo[/* url */3]
                 }));
 }
