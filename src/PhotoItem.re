@@ -8,5 +8,5 @@ module Styles = {
 [@react.component]
 let make = (~photo, ~photos, ~setModalOpen) =>
   <div className=Styles.container onClick={_ => setModalOpen(photo, photos)}>
-    <img className=Styles.photoItem src={photo.url} />
+    <img className=Styles.photoItem src={photo.url} alt="" />
   </div>;

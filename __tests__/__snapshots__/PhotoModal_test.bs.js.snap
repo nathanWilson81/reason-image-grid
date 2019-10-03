@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PhotoModal renders the modal 1`] = `
+<div>
+  <div
+    class="css-r88ox7"
+  >
+    <div>
+      <h3>
+        This is the title
+      </h3>
+      <img
+        src="foo1"
+      />
+      <div
+        class="css-k008qs"
+      >
+        <input
+          value=""
+        />
+        <button>
+          Submit
+        </button>
+        <button>
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
