@@ -3,6 +3,10 @@
   "reason": {
     "react-jsx": 3
   },
+  "warnings": {
+    "number": "+A-48-42-40-4-9",
+    "error": "+A-40-4-9"
+  },
   "sources": [ 
     {
       "dir": "src",
@@ -25,7 +29,9 @@
     "@glennsl/bs-json",
     "bs-css",
     "bs-fetch",
+    "decco",
     "reason-react",
+    "reason-promise",
     "reason-react-update"
   ],
   "bs-dev-dependencies":[
@@ -33,5 +39,6 @@
     "bs-jest-dom",
     "bs-react-testing-library"
   ],
+  "ppx-flags": ["decco/ppx"],
   "refmt": 3
 }

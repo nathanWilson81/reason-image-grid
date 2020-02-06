@@ -1,4 +1,5 @@
 open Types;
+
 module Styles = {
   open Css;
   let container =
@@ -16,7 +17,7 @@ module API = {
   let getPhotos = () =>
     Utils.fetchAndDecode(
       "https://jsonplaceholder.typicode.com/photos",
-      Decoders.decodePhotos,
+      Types.photos_decode,
     );
 };
 
@@ -44,20 +45,18 @@ let make = _ => {
       | FetchPhotos =>
         UpdateWithSideEffects(
           state,
-          (
-            ({send}) => {
-              ignore(
-                API.getPhotos()
-                |> Js.Promise.then_(photos => {
-                     let filteredPhotos =
-                       List.filter(photo => photo.id < 26, photos);
-                     send(SetVisualState(Loaded(filteredPhotos)))
-                     |> Js.Promise.resolve;
-                   }),
-              );
-              Some(() => ());
-            }
-          ),
+          ({send}) => {
+            ignore(
+              API.getPhotos()
+              |> Js.Promise.then_(photos => {
+                   let filteredPhotos =
+                     List.filter(photo => photo.id < 26, photos);
+                   send(SetVisualState(Loaded(filteredPhotos)))
+                   |> Js.Promise.resolve;
+                 }),
+            );
+            Some(() => ());
+          },
         )
       | SetModalOpen(photo, photos) =>
         Update({visualState: Modal(photo, photos)})
@@ -65,12 +64,10 @@ let make = _ => {
       | SetItemToLocalStorage(string, id) =>
         UpdateWithSideEffects(
           state,
-          (
-            _ => {
-              Dom.Storage.(localStorage |> setItem("image" ++ id, string));
-              Some(() => ());
-            }
-          ),
+          _ => {
+            Dom.Storage.(localStorage |> setItem("image" ++ id, string));
+            Some(() => ());
+          },
         )
       }
     );
@@ -84,30 +81,28 @@ let make = _ => {
     <PhotoModal
       photo
       photos
-      onInputSubmit=((value, id) => send(SetItemToLocalStorage(value, id)))
-      setModalClosed=(photos => send(SetModalClosed(photos)))
+      onInputSubmit={(value, id) => send(SetItemToLocalStorage(value, id))}
+      setModalClosed={photos => send(SetModalClosed(photos))}
     />
   | Error(message) => <h1> {React.string("Uh oh: " ++ message)} </h1>
   | Loaded(photos) =>
     <div className=Styles.container>
       <div className=Styles.photoContainer>
-        {
-          React.array(
-            Array.of_list(
-              photos |> List.map(
-                item =>
+        {React.array(
+           Array.of_list(
+             photos
+             |> List.map(item =>
                   <PhotoItem
                     key={string_of_int(item.id)}
                     photo=item
                     photos
-                    setModalOpen={
-                      (photo, photos) => send(SetModalOpen(photo, photos))
+                    setModalOpen={(photo, photos) =>
+                      send(SetModalOpen(photo, photos))
                     }
                   />
-              ),
-            ),
-          )
-        }
+                ),
+           ),
+         )}
       </div>
     </div>
   };

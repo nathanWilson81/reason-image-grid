@@ -1,4 +1,3 @@
-
 open Types;
 open Jest;
 open JestDom;
@@ -16,17 +15,17 @@ describe("PhotoItem", () => {
   let photos = [photo];
   let setModalOpen = [%raw {|jest.fn()|}];
   test("renders the item", () =>
-    <PhotoItem photo photos setModalOpen  />
+    <PhotoItem photo photos setModalOpen />
     |> render
     |> container
     |> expect
     |> toMatchSnapshot
   );
   test("sets the src on the image", () =>
-    <PhotoItem photo photos setModalOpen  />
+    <PhotoItem photo photos setModalOpen />
     |> render
     |> getByAltText("")
     |> expect
     |> toHaveAttribute("src", ~value="foo1")
-    );
+  );
 });

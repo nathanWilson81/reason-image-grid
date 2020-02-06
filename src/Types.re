@@ -1,3 +1,4 @@
+[@decco]
 type photo = {
   albumId: int,
   id: int,
@@ -5,3 +6,6 @@ type photo = {
   url: string,
   thumbnailUrl: string,
 };
+
+[@decco]
+type photos = list(photo);
