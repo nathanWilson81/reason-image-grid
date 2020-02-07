@@ -1,5 +1,5 @@
 {
-  "name": "react-hooks-template",
+  "name": "reason-image-grid-example",
   "reason": {
     "react-jsx": 3
   },
@@ -19,16 +19,14 @@
   ],
   "package-specs": [
     {
-      "module": "commonjs",
+      "module": "es6",
       "in-source": true
     }
   ],
   "suffix": ".bs.js",
   "namespace": true,
   "bs-dependencies": [
-    "@glennsl/bs-json",
     "bs-css",
-    "bs-fetch",
     "decco",
     "reason-react",
     "reason-promise",
@@ -39,6 +37,6 @@
     "bs-jest-dom",
     "bs-react-testing-library"
   ],
-  "ppx-flags": ["decco/ppx"],
+  "ppx-flags": ["decco/ppx", "bs-let/ppx"],
   "refmt": 3
 }

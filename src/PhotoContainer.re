@@ -1,4 +1,5 @@
 open Types;
+open Utils;
 
 module Styles = {
   open Css;
@@ -47,15 +48,16 @@ let make = _ => {
           state,
           ({send}) => {
             ignore(
-              API.getPhotos()
-              |> Js.Promise.then_(photos => {
-                   let filteredPhotos =
-                     List.filter(photo => photo.id < 26, photos);
-                   send(SetVisualState(Loaded(filteredPhotos)))
-                   |> Js.Promise.resolve;
-                 }),
+              {
+                let%Promise photos = API.getPhotos();
+                let filteredPhotos =
+                  List.filter(photo => photo.id < 26, photos);
+                Promise.resolved(
+                  send(SetVisualState(Loaded(filteredPhotos))),
+                );
+              },
             );
-            Some(() => ());
+            None;
           },
         )
       | SetModalOpen(photo, photos) =>
@@ -66,7 +68,7 @@ let make = _ => {
           state,
           _ => {
             Dom.Storage.(localStorage |> setItem("image" ++ id, string));
-            Some(() => ());
+            None;
           },
         )
       }
